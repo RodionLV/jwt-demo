@@ -32,9 +32,15 @@ class UserService : UserDetailsService {
 
     @Transactional
     fun saveUser(user: UserModel): UserModel {
-
         user.roles.add( roleRepository.findOneByRole("USER").get() )
 
         return userRepository.save(user)
+    }
+
+    @Transactional
+    fun saveAdmin(admin: UserModel): UserModel {
+        admin.roles.add( roleRepository.findOneByRole("ADMIN").get() )
+
+        return userRepository.save(admin)
     }
 }

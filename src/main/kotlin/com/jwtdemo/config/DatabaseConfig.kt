@@ -33,8 +33,12 @@ class DatabaseConfig {
                 password = "\$2a\$12\$aq/.rt7Uwov5S1Qdy5drQ.MzOsFkEDd7.JZc8FzZbftJ.jdbSo7ay"
             )
         )
-
-
+        userService.saveAdmin(
+            UserModel(
+                email = "admin",
+                password = "\$2a\$12\$ESuSJjF92L/P3RBCPdqpNuzknHqe1NFKfvYtXyvlTd8TQDChvAaJW"
+            )
+        )
     }
 
 }
