@@ -1,10 +1,19 @@
 package com.jwtdemo.controllers
 
 
+import com.jwtdemo.dto.JwtRequest
+import com.jwtdemo.dto.JwtResponse
 import com.jwtdemo.dto.UserDto
-import com.jwtdemo.exceptions.ConflictException
+import com.jwtdemo.exceptions.ApiException
 import com.jwtdemo.services.UserService
+import com.jwtdemo.utils.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -13,27 +22,26 @@ import java.util.*
 @RequestMapping("/auth")
 class AuthController {
 
-    @Autowired
-    lateinit var userService: UserService
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var jwtTokenUtil: JwtTokenUtil
+    @Autowired lateinit var authenticationManager: AuthenticationManager;
 
-    @PostMapping("/registration")
-    fun registration(@RequestBody userDto: UserDto){
+    @PostMapping
+    fun registration(@RequestBody authRequest: JwtRequest): ResponseEntity<Any>{
+        try {
+            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(authRequest.email, authRequest.password))
+        }catch ( authenticationException: AuthenticationException ){
+            return ResponseEntity( ApiException(HttpStatus.UNAUTHORIZED.value(), "неверный логин или пароль"), HttpStatus.UNAUTHORIZED)
+        }
+        val user: UserDetails = userService.loadUserByUsername(authRequest.email ?: "")
+        val token: String = jwtTokenUtil.generateToken(user)
 
-        if(userDto.email == null){
-            throw ConflictException("Пользователь не заполнил обезательное поле email")
-        }
-        if(userDto.password == null){
-            throw ConflictException("Пользователь не заполнил обезательное поле password")
-        }
-        if( userService.findByEmail( userDto.email) != null ){
-            throw ConflictException("Пользоваетль с таким email уже существует")
-        }
-
-        userService.saveUser( userDto.toModel() )
+        return ResponseEntity.ok(JwtResponse(token = token))
     }
 
     @PostMapping("/login")
-    fun login(){
+    fun login(@RequestBody userDto: UserDto){
+
 
     }
     @PostMapping("/logout")
