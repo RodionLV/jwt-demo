@@ -13,5 +13,5 @@ spring:
 
 
 jwt:
-  secret: iC58i6J7og4Syp5/GJhakopUGezRJCTz5zQNuklSkVgQCeANA5rPYRKVGXdhiDWU
+  secret: iC58i6J7og4Syp5/GJhakopUGezRJCTz5zQNuklSkVgQCeANA5rPYRKVGXdhiDewWfF
   lifetime: 30m

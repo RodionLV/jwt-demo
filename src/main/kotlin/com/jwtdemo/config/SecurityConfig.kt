@@ -11,13 +11,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 
 @Configuration
 class SecurityConfig {
-    @Autowired
-    lateinit var userService: UserService;
-
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var jwtFilter: JwtFilter
     @Bean
     fun filterChain(http: HttpSecurity) : SecurityFilterChain{
         http.authorizeHttpRequests {
@@ -27,6 +27,7 @@ class SecurityConfig {
                 .requestMatchers("/test/admin").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
         }
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
             .csrf { csrf->csrf.disable() }
             .cors { cors->cors.disable() }
             .sessionManagement { session->
