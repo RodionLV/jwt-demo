@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 
 @Configuration
@@ -15,6 +16,8 @@ class DatabaseConfig {
 
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var roleRepository: RoleRepository
+
+    @Autowired lateinit var passwordEncoder: BCryptPasswordEncoder
 
     @Bean
     fun init() = CommandLineRunner{
@@ -26,17 +29,16 @@ class DatabaseConfig {
             RoleModel(role = "USER")
         )
 
-
         userService.saveUser(
             UserModel(
                 email = "rodion",
-                password = "\$2a\$12\$aq/.rt7Uwov5S1Qdy5drQ.MzOsFkEDd7.JZc8FzZbftJ.jdbSo7ay"
+                password = passwordEncoder.encode("toor")
             )
         )
         userService.saveAdmin(
             UserModel(
                 email = "admin",
-                password = "\$2a\$12\$ESuSJjF92L/P3RBCPdqpNuzknHqe1NFKfvYtXyvlTd8TQDChvAaJW"
+                password = passwordEncoder.encode("admin")
             )
         )
     }

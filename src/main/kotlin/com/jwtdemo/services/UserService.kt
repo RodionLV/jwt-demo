@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import java.util.Optional
 
 
 @Service
@@ -18,6 +19,7 @@ class UserService : UserDetailsService {
     @Autowired lateinit var userRepository: UserRepository
     @Autowired lateinit var roleRepository: RoleRepository
 
+    @Transactional
     override fun loadUserByUsername(email: String): UserDetails {
         val user: UserModel = userRepository.findOneByEmail(email).orElseThrow {
             UsernameNotFoundException("Пользователь не найден")
@@ -28,6 +30,11 @@ class UserService : UserDetailsService {
             user.password,
             user.roles.stream().map { SimpleGrantedAuthority(it.role) }.toList(),
         )
+    }
+
+    @Transactional
+    fun findByEmail(email: String) : Optional<UserModel> {
+        return userRepository.findOneByEmail(email)
     }
 
     @Transactional

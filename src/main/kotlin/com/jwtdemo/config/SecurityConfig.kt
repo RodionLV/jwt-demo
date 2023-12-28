@@ -13,22 +13,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig {
     @Autowired
     lateinit var userService: UserService;
 
     @Bean
     fun filterChain(http: HttpSecurity) : SecurityFilterChain{
-        http.authorizeHttpRequests { authz->
-            authz
+        http.authorizeHttpRequests {
+            it
                 .requestMatchers("/test/hello").permitAll()
-                .requestMatchers("/test/admin").hasRole("ADMIN")
+                .requestMatchers("/test/admin").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
         }
             .csrf { csrf->csrf.disable() }
@@ -40,7 +40,7 @@ class SecurityConfig {
                 exception.authenticationEntryPoint(
                     HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
                 )
-            }
+            }.httpBasic { it.init(http) }
 
         return http.build()
     }
@@ -60,7 +60,7 @@ class SecurityConfig {
 
     @Bean
     fun passwordEncoder() : BCryptPasswordEncoder{
-        return BCryptPasswordEncoder(12)
+        return BCryptPasswordEncoder()
     }
 
 }

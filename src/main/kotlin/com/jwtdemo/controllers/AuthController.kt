@@ -25,10 +25,11 @@ class AuthController {
         if(userDto.password == null){
             throw ConflictException("Пользователь не заполнил обезательное поле password")
         }
-        /*if( userService. != null ){
+        if( userService.findByEmail( userDto.email) != null ){
             throw ConflictException("Пользоваетль с таким email уже существует")
-        }*/
+        }
 
+        userService.saveUser( userDto.toModel() )
     }
 
     @PostMapping("/login")
