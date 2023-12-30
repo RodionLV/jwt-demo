@@ -1,10 +1,14 @@
 package com.jwtdemo.config
 
+import com.jwtdemo.exceptions.UnauthorizedException
 import com.jwtdemo.utils.JwtTokenUtil
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -12,33 +16,35 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.GenericFilterBean
 import java.io.IOException
-import java.util.StringJoiner
+
 
 
 @Component
-
 class JwtFilter : GenericFilterBean(){
 
     @Autowired lateinit var jwtTokenUtil: JwtTokenUtil
 
-    @Throws(ServletException::class, IOException::class)
+
     override fun doFilter(request: ServletRequest, response: ServletResponse, filterChain: FilterChain) {
-        val authHeader: String? = request.getParameter("Authorization")
         var username: String? = null
         var roles: List<String>? = null
-        var jwt: String? = null
 
-        if( authHeader != null && authHeader.startsWith("Bearer ")){
-            jwt = authHeader.substring(7)
+        val jwt: String? = getToken(request as HttpServletRequest)
 
-            var map: Map<String, Any> = jwtTokenUtil.getClaims(jwt)
+        if( jwt != null ){
+            var map: Map<String, Any>
 
-            username = map["sub"].toString()
-            roles = map["roles"] as List<String>?
+            try {
+                map = jwtTokenUtil.getClaims(jwt)
 
-            println(roles)
+                username = map["sub"].toString()
+                roles = map["roles"] as List<String>?
+            }catch(e: ExpiredJwtException){
+                println("Время жизни токена истекло")
+            }catch(e: SignatureException){
+                println("ошибка подписи")
+            }
         }
-
 
         if( username != null && roles != null ){
             val token: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
@@ -51,5 +57,16 @@ class JwtFilter : GenericFilterBean(){
         }
 
         filterChain.doFilter(request, response)
+    }
+
+
+    private fun getToken(request: HttpServletRequest): String?{
+        val authHeader: String? = request.getHeader("authorization")
+
+        if(authHeader != null && authHeader.startsWith("Bearer ")){
+            return authHeader.substring(7)
+        }
+
+        return null
     }
 }

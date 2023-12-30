@@ -5,6 +5,8 @@ import com.jwtdemo.dto.JwtRequest
 import com.jwtdemo.dto.JwtResponse
 import com.jwtdemo.dto.UserDto
 import com.jwtdemo.exceptions.ApiException
+import com.jwtdemo.exceptions.UnauthorizedException
+import com.jwtdemo.services.AuthService
 import com.jwtdemo.services.UserService
 import com.jwtdemo.utils.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,21 +24,16 @@ import java.util.*
 @RequestMapping("/auth")
 class AuthController {
 
-    @Autowired lateinit var userService: UserService
-    @Autowired lateinit var jwtTokenUtil: JwtTokenUtil
-    @Autowired lateinit var authenticationManager: AuthenticationManager;
+    @Autowired lateinit var authService: AuthService
 
     @PostMapping
-    fun registration(@RequestBody authRequest: JwtRequest): ResponseEntity<Any>{
-        try {
-            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(authRequest.email, authRequest.password))
-        }catch ( authenticationException: AuthenticationException ){
-            return ResponseEntity( ApiException(HttpStatus.UNAUTHORIZED.value(), "неверный логин или пароль"), HttpStatus.UNAUTHORIZED)
-        }
-        val user: UserDetails = userService.loadUserByUsername(authRequest.email ?: "")
-        val token: String = jwtTokenUtil.generateToken(user)
+    fun authenticate(@RequestBody authRequest: JwtRequest): ResponseEntity<JwtResponse>{
+        return authService.getToken(authRequest.email, authRequest.password)
+    }
 
-        return ResponseEntity.ok(JwtResponse(token = token))
+    @PostMapping("/registration")
+    fun registration(@RequestBody userDto: UserDto){
+
     }
 
     @PostMapping("/login")
