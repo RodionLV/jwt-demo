@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 
 @Configuration
-class DatabaseConfig {
+@Profile("development")
+class DBDevConfig {
 
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var roleRepository: RoleRepository

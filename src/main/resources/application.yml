@@ -1,6 +1,12 @@
+spring:
+  profiles:
+    active: development
+  main:
+    allow-circular-references: true
+
+---
 server:
   port: 8080
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -10,10 +16,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-  main:
-    allow-circular-references: true
-
-
+  config:
+    activate:
+      on-profile: development
 jwt:
   secret: iC58i6J7og4Syp5/GJhakopUGezRJCTz5zQNuklSkVgQCeANA5rPYRKVGXdhiDewWfF
-  lifetime: 30m
+  lifetime: 5m
+
+
