@@ -1,5 +1,6 @@
 package com.jwtdemo.controllers
 
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -7,24 +8,23 @@ import java.security.Principal
 
 
 @RestController
-@RequestMapping("/test")
-class TestController {
+@RequestMapping("/api")
 
-
-    @GetMapping("/hello")
-    fun getHello(): String{
-        return "<h1>hello</h1>"
-    }
+class DataController {
 
     @GetMapping("/info")
     fun getInfo(principal: Principal): String{
         return principal.toString()
     }
 
-    @GetMapping("/admin")
-    fun getAdmin():String{
-        return "admin"
+    @GetMapping("/user")
+    fun getUser():String{
+        return "<h1>you user</h1>"
     }
 
-
+    @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    fun getAdmin():String{
+        return "<h1>you admin</h1>"
+    }
 }

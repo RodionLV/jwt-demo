@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig {
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var jwtFilter: JwtFilter
@@ -25,9 +28,7 @@ class SecurityConfig {
     fun filterChain(http: HttpSecurity) : SecurityFilterChain{
         http.authorizeHttpRequests {
             it
-                .requestMatchers("/test/hello").permitAll()
-                .requestMatchers("/auth").permitAll()
-                .requestMatchers("/test/admin").hasAuthority("ADMIN")
+                .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
         }
             .addFilterBefore(jwtFilter, BasicAuthenticationFilter::class.java)

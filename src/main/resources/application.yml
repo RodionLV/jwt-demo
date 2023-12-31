@@ -10,6 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  main:
+    allow-circular-references: true
 
 
 jwt:

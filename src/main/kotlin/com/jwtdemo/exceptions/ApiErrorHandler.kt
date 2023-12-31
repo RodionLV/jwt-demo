@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
 class ApiErrorHandler {
-
     @ExceptionHandler(UnauthorizedException::class)
-    fun UnauthorizedException(e: UnauthorizedException): ResponseEntity<ApiException>{
+    fun unauthorizedException(e: UnauthorizedException): ResponseEntity<ApiException>{
         return ResponseEntity(ApiException(e.code, e.status, e.message), e.status)
     }
-
+    @ExceptionHandler(BadRequestException::class)
+    fun badRequestException(e: BadRequestException): ResponseEntity<ApiException>{
+        return ResponseEntity(ApiException(e.code, e.status, e.message), e.status)
+    }
 }

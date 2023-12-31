@@ -1,5 +1,6 @@
 package com.jwtdemo.config
 
+import com.jwtdemo.dto.UserDto
 import com.jwtdemo.models.RoleModel
 import com.jwtdemo.models.UserModel
 import com.jwtdemo.repositories.RoleRepository
@@ -30,9 +31,9 @@ class DatabaseConfig {
         )
 
         userService.saveUser(
-            UserModel(
+            UserDto(
                 email = "rodion",
-                password = passwordEncoder.encode("toor")
+                password = "toor"
             )
         )
         userService.saveAdmin(

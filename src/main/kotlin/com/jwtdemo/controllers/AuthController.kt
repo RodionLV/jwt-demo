@@ -6,6 +6,7 @@ import com.jwtdemo.dto.JwtResponse
 import com.jwtdemo.dto.UserDto
 import com.jwtdemo.exceptions.ApiException
 import com.jwtdemo.exceptions.UnauthorizedException
+import com.jwtdemo.models.UserModel
 import com.jwtdemo.services.AuthService
 import com.jwtdemo.services.UserService
 import com.jwtdemo.utils.JwtTokenUtil
@@ -25,31 +26,14 @@ import java.util.*
 class AuthController {
 
     @Autowired lateinit var authService: AuthService
-
+    @Autowired lateinit var userService: UserService
     @PostMapping
     fun authenticate(@RequestBody authRequest: JwtRequest): ResponseEntity<JwtResponse>{
         return authService.getToken(authRequest.email, authRequest.password)
     }
-
     @PostMapping("/registration")
-    fun registration(@RequestBody userDto: UserDto){
-
+    fun registration(@RequestBody userDto: UserDto): UserDto{
+        return userService.saveUser(userDto).toDto()
     }
-
-    @PostMapping("/login")
-    fun login(@RequestBody userDto: UserDto){
-
-
-    }
-    @PostMapping("/logout")
-    fun logout(){
-
-    }
-
-    @GetMapping("/access")
-    fun access(){
-
-    }
-
 
 }
