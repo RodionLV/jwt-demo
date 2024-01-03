@@ -6,6 +6,7 @@ import kotlin.collections.*
 import kotlin.collections.ArrayList
 
 @Entity
+@Table(name = "users")
 data class UserModel(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -4,6 +4,7 @@ import jakarta.persistence.*
 
 
 @Entity
+@Table(name = "tokens")
 data class TokenModel (
 
     @Id
