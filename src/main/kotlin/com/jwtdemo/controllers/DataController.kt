@@ -8,8 +8,7 @@ import java.security.Principal
 
 
 @RestController
-@RequestMapping("/api")
-
+@RequestMapping("/data")
 class DataController {
 
     @GetMapping("/info")
