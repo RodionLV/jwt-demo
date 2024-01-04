@@ -3,6 +3,7 @@ package com.jwtdemo.config
 import com.jwtdemo.exceptions.UnauthorizedException
 import com.jwtdemo.utils.JwtTokenUtil
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
@@ -43,6 +44,8 @@ class JwtFilter : GenericFilterBean(){
                 println("Время жизни токена истекло")
             }catch(e: SignatureException){
                 println("ошибка подписи")
+            }catch(e: MalformedJwtException){
+                println("некоректный токен")
             }
         }
 
